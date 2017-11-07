@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <style type="text/css">
+        #box{
+          margin-bottom: 50px;
+        }
+        </style>
+    </head>
+    <body>
+    <div id="box">
+        <input type="file" class="pickfiles" id="pickfiles" value="上传图片"/ >
+    </div>
+    <img src="" alt="" class="imgshow"/>
+    </body>
+</html>
+<script type="text/javascript" src="js/query.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/plupload/moxie.js"></script>
+<script type="text/javascript" src="js/plupload/plupload.dev.js"></script>
+<script type="text/javascript" src="js/qiniu.js"></script>
+<script type="text/javascript">
+//引入Plupload 、qiniu.js后
+const mydomain = '文件存放地址';
+var options = {
+    runtimes: 'html5,flash,html4',    //上传模式,依次退化
+    browse_button: 'pickfiles',       //上传选择的点选按钮，**必需**
+    container: 'box',           //上传区域DOM ID，默认是browser_button的父元素，
+    drop_element: 'container',        //拖曳上传区域元素的ID，拖曳文件或文件夹后可触发上传
+    flash_swf_url: 'js/plupload/Moxie.swf',  //引入flash,相对路径
+    dragdrop: true,                   //开启可拖曳上传
+    chunk_size: '4mb',                //分块上传时，每片的体积
+    domain: mydomain,//文件存放地址
+    //unique_names值为 true 时会为每个上传的文件生成一个唯一的文件名，这个是 plupload 插件自动生成的，如果设置成 false，七牛会以上传的原始名进行命名
+     unique_names: true,
+     //通过这个页面获取即可 http://jsfiddle.net/gh/get/extjs/4.2/icattlecoder/jsfiddle/tree/master/uptoken
+    uptoken:'uptoken',
+    get_new_uptoken: false,
+    auto_start: true,
+    log_level: 5,
+    init: {
+        'FileUploaded': function(up, file, info) {
+               // 每个文件上传成功后,处理相关的事情
+               var jsonstr = eval('(' + info + ')');
+               console.log(jsonstr,jsonstr.key);
+              $('.imgshow').attr('src',mydomain+jsonstr.key);
+        },
+    }
+  };
+//文件上传
+var uploader = Qiniu.uploader(options);
+
+</script>
